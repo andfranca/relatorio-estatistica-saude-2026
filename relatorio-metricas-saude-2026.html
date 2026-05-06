@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório Técnico ASIS SP | 2000-2022</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --card: #141414;
+            --text: #d4d4d4;
+            --sky: #38bdf8;
+            --rose: #f43f5e;
+            --emerald: #10b981;
+            --border: rgba(255, 255, 255, 0.07);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            display: block;
+            line-height: 1.6;
+        }
+
+        /* Topbar Estilizada */
+        .topbar {
+            background: #0d0d0d;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 4rem;
+        }
+        .topbar .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #fff;
+        }
+        .topbar .logo span {
+            color: var(--sky);
+        }
+        .topbar nav {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .topbar nav a {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .topbar nav a:hover { color: var(--sky); }
+        
+        /* Main Layout */
+        main { padding: 4rem; max-width: 1200px; margin: 0 auto; }
+        
+        /* Hero Section */
+        .hero { margin-bottom: 6rem; padding-top: 1rem; }
+        .hero-title { font-size: 3.5rem; font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -1.5px; }
+        .hero-subtitle { font-size: 1.1rem; color: #a1a1aa; font-weight: 400; margin-bottom: 0.8rem; }
+        .hero-desc { font-size: 0.95rem; color: #71717a; max-width: 700px; margin-bottom: 2rem; line-height: 1.6; }
+        .hero-buttons { display: flex; gap: 1rem; }
+        
+        .btn-primary { background: #2563eb; color: #fff; padding: 0.75rem 1.5rem; border-radius: 0.3rem; text-decoration: none; font-size: 0.85rem; font-weight: bold; transition: background 0.3s; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-secondary { background: transparent; border: 1px solid #3f3f46; color: #d4d4d4; padding: 0.75rem 1.5rem; border-radius: 0.3rem; text-decoration: none; font-size: 0.85rem; font-weight: bold; transition: all 0.3s; }
+        .btn-secondary:hover { background: #27272a; color: #fff; border-color: #52525b; }
+
+        /* Componentes Base */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
+        .card { background: var(--card); padding: 2rem; border-radius: 0.75rem; border: 1px solid var(--border); }
+        .card h4 { font-size: 0.7rem; text-transform: uppercase; color: #888; margin-bottom: 1rem; letter-spacing: 1px; }
+        .big-num { font-size: 2.5rem; font-weight: 800; color: #fff; display: block; line-height: 1.2; }
+        .sub-text { font-size: 0.8rem; color: var(--sky); }
+
+        /* Seções e Gráficos */
+        section { margin-bottom: 5rem; scroll-margin-top: 100px; }
+        .section-title { margin-bottom: 1.5rem; color: #fff; font-size: 1.5rem; font-weight: 700; }
+        .chart-container { height: 250px; width: 100%; margin-top: 1rem; }
+        
+        .controls { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        button { background: #222; border: 1px solid #333; color: #fff; padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.7rem; font-weight: bold; }
+        button.active { background: var(--sky); color: #000; border-color: var(--sky); }
+
+        /* Metodologia */
+        ul.custom-list { list-style: none; padding-left: 0; }
+        ul.custom-list li { padding-left: 1.2rem; margin-bottom: 0.8rem; color: #bbb; font-size: 0.9rem; position: relative; }
+        ul.custom-list li::before { content: '•'; color: var(--sky); font-weight: bold; position: absolute; left: 0; }
+        .card-title { font-size: 1.1rem !important; color: #fff !important; margin-bottom: 1.2rem !important; text-transform: none !important; letter-spacing: normal !important; font-weight: 700; }
+
+        /* Tabela TMI */
+        .tmi-table { width: 100%; border-collapse: collapse; text-align: left; color: #d4d4d4; font-size: 0.95rem; }
+        .tmi-table td { padding: 0.8rem 0; border-bottom: 1px solid #333; }
+        .tmi-table tr:last-child td { border-bottom: none; }
+        .tmi-badge { padding: 0.3rem 0.8rem; border-radius: 4px; display: inline-block; font-weight: bold; min-width: 60px; text-align: center; }
+
+        /* Autores */
+        .author-item { border-left: 4px solid #1d4ed8; padding-left: 1.2rem; margin-bottom: 2rem; }
+        .author-item h5 { font-size: 0.9rem; color: #fff; margin-bottom: 0.25rem; letter-spacing: 0.5px; text-transform: uppercase; }
+        .author-item p { font-size: 0.85rem; color: #888; line-height: 1.4; }
+
+        footer { text-align: center; padding: 2rem; border-top: 1px solid var(--border); color: #666; font-size: 0.85rem; margin-top: 4rem; }
+    </style>
+</head>
+<body>
+
+    <header class="topbar">
+        <div class="logo">ASIS <span>2022</span></div>
+        <nav>
+            <a href="#metodologia">Metodologia</a>
+            <a href="#territorio">Território</a>
+            <a href="#demografia">Demografia</a>
+            <a href="#educacao">Educação</a>
+            <a href="#infantil">Mort. Infantil</a>
+            <a href="#dcnt">DCNT</a>
+            <a href="#causas">Causas Externas</a>
+            <a href="#iniquidade">Iniquidade Racial</a>
+        </nav>
+    </header>
+
+    <main>
+        <header class="hero">
+            <h1 class="hero-title">Análise Comparativa de<br>Saúde e Mortalidade <br> Grupo 3</h1>
+            <h2 class="hero-subtitle">Estado de São Paulo e Município Capital (2000–2022)</h2>
+            <p class="hero-desc">
+                Este documento constitui um breve resumo de uma Análise de Situação de Saúde (ASIS) voltada à investigação dos perfis epidemiológicos e demográficos do Estado e do Município de São Paulo entre 2000 e 2022. O estudo decodifica as interações entre a transição demográfica e a carga de mortalidade, identificando iniquidades raciais para fundamentar estratégias de gestão pública baseadas em evidências. 
+            </p>
+            <div class="hero-buttons">
+                <a href="#metodologia" class="btn-primary">Explorar Análise</a>
+                <a href="https://docs.google.com/document/d/1sgmzLZFUhwVM7Oineoys3zoD4y5P8A4B" target="_blank" class="btn-secondary">Relatório Completo</a>
+            </div>
+        </header>
+
+        <!-- Metodologia -->
+        <section id="metodologia">
+            <h3 class="section-title" style="font-size: 2rem;">Metodologia</h3>
+            <div class="grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="card">
+                    <h4 class="card-title">Fontes de Dados</h4>
+                    <ul class="custom-list">
+                        <li>SIM (Sistema de Informações sobre Mortalidade)</li>
+                        <li>SINASC (Sistema de Informações sobre Nascidos Vivos)</li>
+                        <li>IBGE Censos (2000, 2010, 2022)</li>
+                        <li>SEADE (Fundação Sistema Estadual de Análise de Dados)</li>
+                        <li>FOSP (Fundação Oncocentro de São Paulo)</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4 class="card-title">Padronização de Taxas <span style="font-size: 0.8rem; color: #555; cursor: help;">ⓘ</span></h4>
+                    <p style="font-size: 0.9rem; color: #bbb; margin-bottom: 1.5rem;">Direct Age Standardization using 2010 Brazilian Census as standard population</p>
+                    <div style="background: #080808; padding: 1rem 1.5rem; border-radius: 0.5rem; font-size: 0.85rem; color: #666; border: 1px solid #1a1a1a;">
+                        <span style="color: var(--sky);">População Padrão:</span> Censo 2010
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                 <h4 class="card-title">Indicadores Principais</h4>
+                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                     <ul class="custom-list">
+                         <li>TMI (Taxa de Mortalidade Infantil)</li>
+                         <li>Taxa de Analfabetismo</li>
+                     </ul>
+                     <ul class="custom-list">
+                         <li>RMM (Razão de Mortalidade Materna)</li>
+                         <li>Taxas Específicas de Mortalidade por DCNT</li>
+                     </ul>
+                     <ul class="custom-list">
+                         <li>Índice de Envelhecimento</li>
+                     </ul>
+                 </div>
+            </div>
+        </section>
+
+        <!-- Território -->
+        <section id="territorio">
+            <h3 class="section-title">01. Território</h3>
+            <p style="font-size: 0.95rem; color: #a1a1aa; margin-bottom: 2rem;">Para fundamentar a análise epidemiológica, examinamos a escala demográfica e a complexidade espacial do Estado e do Município de São Paulo, conforme dados do Censo 2022.</p>
+            
+            <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                <div class="card" style="background: rgba(186, 230, 253, 0.1); border: 1px solid rgba(186, 230, 253, 0.2); border-top: 4px solid #93c5fd; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 3rem 2rem;">
+                    <h4 style="color: #93c5fd; font-size: 1.8rem; text-transform: none; margin-bottom: 1.5rem; font-weight: bold; letter-spacing: normal;">Estado de São Paulo</h4>
+                    <p style="font-size: 1.3rem; color: #fff; margin-bottom: 0.5rem;">População: <strong>44.420.459</strong></p>
+                    <p style="font-size: 1.3rem; color: #fff;">Densidade: <strong>178 hab/km²</strong></p>
+                </div>
+                <div class="card" style="background: rgba(167, 243, 208, 0.1); border: 1px solid rgba(167, 243, 208, 0.2); border-top: 4px solid #86efac; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 3rem 2rem;">
+                    <h4 style="color: #86efac; font-size: 1.8rem; text-transform: none; margin-bottom: 1.5rem; font-weight: bold; letter-spacing: normal;">Município de São Paulo</h4>
+                    <p style="font-size: 1.3rem; color: #fff; margin-bottom: 0.5rem;">População: <strong>11.451.999</strong></p>
+                    <p style="font-size: 1.3rem; color: #fff;">Densidade: <strong>7.528 hab/km²</strong></p>
+                </div>
+            </div>
+
+            <div class="grid" style="grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                <div class="card" style="border-top: 4px solid #52525b;">
+                    <h5 style="color: #fff; font-size: 1.1rem; margin-bottom: 0.8rem; font-weight: bold;">Motor Populacional do País</h5>
+                    <p style="font-size: 0.85rem; color: #bbb; line-height: 1.5;">O Estado de São Paulo concentra a maior população e o maior PIB do Brasil, atuando como um "laboratório" que antecipa tendências demográficas nacionais e regionais.</p>
+                </div>
+                <div class="card" style="border-top: 4px solid #52525b;">
+                    <h5 style="color: #fff; font-size: 1.1rem; margin-bottom: 0.8rem; font-weight: bold;">Complexidade da Capital</h5>
+                    <p style="font-size: 0.85rem; color: #bbb; line-height: 1.5;">Com densidade demográfica superior a 7.500 hab/km², a capital impõe desafios únicos para a vigilância epidemiológica e a capilaridade da rede de Atenção Primária.</p>
+                </div>
+                <div class="card" style="border-top: 4px solid #52525b;">
+                    <h5 style="color: #fff; font-size: 1.1rem; margin-bottom: 0.8rem; font-weight: bold;">Contraste de Desenvolvimento</h5>
+                    <p style="font-size: 0.85rem; color: #bbb; line-height: 1.5;">Mesmo com IDHM "muito alto" (0,805 na capital), ambos os territórios são marcados por profundas desigualdades intramunicipais e segregação socioespacial que condicionam os desfechos de saúde.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Demografia -->
+        <section id="demografia">
+            <h3 class="section-title">02. Transição Demográfica</h3>
+            <div class="grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 1rem;">
+                <div class="card">
+                    <h4>Série Histórica (1970-2022)</h4>
+                    <div class="chart-container"><canvas id="popChart"></canvas></div>
+                </div>
+                <div class="card">
+                    <h4>Índice de Envelhecimento</h4>
+                    <div class="chart-container"><canvas id="agingChart"></canvas></div>
+                </div>
+            </div>
+            <div style="padding: 0 1rem; margin-top: 0; margin-bottom: 2rem;">
+                <p style="font-size: 0.85rem; color: #888;">
+                    <strong>Nota Explicativa:</strong> O Índice de Envelhecimento é calculado como a razão entre a população de 65 anos ou mais e a população de 0 a 14 anos, multiplicada por 100, seguindo a definição utilizada pelo IBGE no Censo Demográfico 2022.
+                </p>
+            </div>
+        </section>
+
+        <!-- Educação -->
+        <section id="educacao">
+            <h3 class="section-title">03. Determinantes Sociais: Educação e Vulnerabilidade</h3>
+            <div class="grid" style="grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+                <div class="card">
+                    <h4>Taxa de Analfabetismo (15+ anos)</h4>
+                    <p style="font-size: 11px; color: #666; margin-bottom: 1rem;">O analfabetismo persiste como marcador de exclusão, especialmente entre populações pretas e pardas.</p>
+                    <div class="chart-container"><canvas id="eduChart"></canvas></div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <div class="card">
+                        <h4>Razão de Analfabetismo</h4>
+                        <span class="big-num" style="color: var(--rose);">2.35x</span>
+                        <p class="sub-text" style="color: #666;">Pretos vs. Brancos</p>
+                    </div>
+                    <div class="card">
+                        <h4>Queda do Analfabetismo Idoso</h4>
+                        <span class="big-num">-46.7%</span>
+                        <p class="sub-text" style="color: #666;">2000-2022</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mortalidade Infantil -->
+        <section id="infantil">
+            <h3 class="section-title">04. Mortalidade Infantil</h3>
+            <div class="grid" style="grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                <div class="card" style="padding: 1.5rem;">
+                    <h4 style="color: #fff; font-size: 1.1rem; text-transform: none; margin-bottom: 1.5rem;">Matriz Comparativa TMI (Óbitos por mil Nascidos Vivos: 2000 &rarr; 2023)</h4>
+                    <table class="tmi-table">
+                        <tr>
+                            <td style="font-weight: bold;">Município de SP:</td>
+                            <td><span class="tmi-badge" style="background: #4b5563;">16,0</span> &rarr; <span class="tmi-badge" style="background: #6b7280;">10,99</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Estado de SP:</td>
+                            <td><span class="tmi-badge" style="background: #1e3a8a;">15,5</span> &rarr; <span class="tmi-badge" style="background: #1d4ed8;">11,5</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Brasil (Referência):</td>
+                            <td><span class="tmi-badge" style="background: #6b7280;">24,8</span> &rarr; <span class="tmi-badge" style="background: #9ca3af; color: #000;">15,0</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; color: #f43f5e;">Meta ODS 3.2 (2030):</td>
+                            <td><span class="tmi-badge" style="background: #be123c; color: #fff;">&lt; 12,0</span> &rarr; <span class="tmi-badge" style="background: #e11d48; color: #fff;">&lt; 12,0</span></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card" style="background: #fef08a; padding: 1.5rem; border: 1px solid #fde047; display: flex; flex-direction: column; justify-content: center;">
+                    <h4 style="color: #a16207; font-size: 1.1rem; text-transform: none; margin-bottom: 1rem; font-weight: bold; text-align: center;">Ponto de Atenção:</h4>
+                    <p style="font-size: 0.95rem; line-height: 1.5; color: #854d0e; text-align: center;">
+                        Embora o município e o estado tenham atendido a meta da ODS global, a estagnação recente exige vigilância extrema contra retrocessos sistêmicos.
+                    </p>
+                </div>
+            </div>
+            <div class="card">
+                <h4>Componentes da Mortalidade Infantil</h4>
+                <div class="chart-container"><canvas id="compInfantilChart"></canvas></div>
+            </div>
+        </section>
+
+        <!-- DCNT -->
+        <section id="dcnt">
+            <h3 class="section-title">05. O Paradoxo das DCNT</h3>
+            <div class="card" style="margin-bottom: 1.5rem; border-color: var(--sky); background: rgba(56, 189, 248, 0.05); padding: 1.5rem;">
+                <p style="font-size: 0.95rem; color: #e0e0e0; line-height: 1.6;">
+                    <strong style="color: var(--sky);">Análise Crítica:</strong> O aumento das taxas brutas é uma ilusão epidemiológica causada pelo envelhecimento populacional; a queda consistente nas taxas padronizadas demonstra a eficácia dos programas de atenção primária e controle hipertensivo na redução do risco real de óbito.
+                </p>
+            </div>
+            <div class="card">
+                <div class="controls">
+                    <button id="btnBruta" class="active" onclick="toggleDcnt(0)">Taxa Bruta</button>
+                    <button id="btnPad" onclick="toggleDcnt(1)">Taxa Padronizada</button>
+                </div>
+                <div class="chart-container" style="height: 300px;"><canvas id="dcntChart"></canvas></div>
+            </div>
+        </section>
+
+        <!-- Causas Externas -->
+        <section id="causas">
+            <h3 class="section-title">06. Causas Externas: Violência e Acidentes</h3>
+            <div class="grid" style="grid-template-columns: 1.5fr 1fr; gap: 1.5rem;">
+                <div class="card">
+                    <h4 style="color: #fff; font-size: 1rem; text-transform: none; margin-bottom: 1.5rem;">Redução Exponencial (Taxa Padronizada por 100 mil Hab. - 2000 vs 2022)</h4>
+                    <div style="height: 300px;"><canvas id="causasBarChart"></canvas></div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="card" style="padding: 1.5rem; border-left: 4px solid var(--sky);">
+                        <h5 style="color: #fff; font-size: 1.1rem; margin-bottom: 0.5rem; text-transform: none;">Redução Geral</h5>
+                        <p style="font-size: 0.85rem; color: #bbb;">Queda de 60% na mortalidade padronizada na capital (94 em 2000 &rarr; 37 em 2022)</p>
+                    </div>
+                    <div class="card" style="padding: 1.5rem; border-left: 4px solid var(--sky);">
+                        <h5 style="color: #fff; font-size: 1.1rem; margin-bottom: 0.5rem; text-transform: none;">Transição de Perfil</h5>
+                        <p style="font-size: 0.85rem; color: #bbb;">Queda acentuada de homicídios contrastada com estabilidade de acidentes de transporte</p>
+                    </div>
+                    <div class="card" style="padding: 1.5rem; border-left: 4px solid var(--sky);">
+                        <h5 style="color: #fff; font-size: 1.1rem; margin-bottom: 0.5rem; text-transform: none;">Fator Emergente</h5>
+                        <p style="font-size: 0.85rem; color: #bbb;">Quedas em idosos como causa crescente de óbitos evitáveis na APS</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Iniquidade Racial -->
+        <section id="iniquidade">
+            <h3 class="section-title" style="color: var(--rose);">07. Iniquidade na Mortalidade Materna e Oncológica</h3>
+            
+            <div class="card" style="margin-bottom: 1.5rem; padding: 2rem;">
+                <div style="display: flex; justify-content: space-between; gap: 2rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                            <div style="flex: 1; background: #3f3f46; height: 12px;"><div style="width: 74.8%; background: #fff; height: 100%;"></div></div>
+                            <span style="font-weight: bold; font-size: 0.9rem; width: 45px; color: #fff;">74.8%</span>
+                        </div>
+                        <span style="font-size: 0.85rem; font-weight: bold; color: #a1a1aa;">Consultas (Brancos)</span>
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                            <div style="flex: 1; background: #3f3f46; height: 12px;"><div style="width: 69.5%; background: #fff; height: 100%;"></div></div>
+                            <span style="font-weight: bold; font-size: 0.9rem; width: 45px; color: #fff;">69.5%</span>
+                        </div>
+                        <span style="font-size: 0.85rem; font-weight: bold; color: #a1a1aa;">Consultas (Pretos)</span>
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                            <div style="flex: 1; background: #3f3f46; height: 12px;"><div style="width: 67.8%; background: #fff; height: 100%;"></div></div>
+                            <span style="font-weight: bold; font-size: 0.9rem; width: 45px; color: #fff;">67.8%</span>
+                        </div>
+                        <span style="font-size: 0.85rem; font-weight: bold; color: #a1a1aa;">Consultas (Pardos)</span>
+                    </div>
+                </div>
+                <p style="text-align: center; color: #71717a; font-size: 0.85rem; margin-bottom: 1.5rem; background: #18181b; padding: 0.3rem;">Acesso a consultas no último ano</p>
+                <p style="text-align: center; color: #d4d4d4; font-size: 0.95rem; margin-bottom: 2rem;">Conforme a Pesquisa Nacional de Saúde (PNS), há uma diferença notável no acesso a consultas médicas no último ano entre diferentes grupos raciais no Brasil.</p>
+                
+                <div style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
+                    <div style="background: #1e3a8a; padding: 1.5rem; flex: 1.2; display: flex; align-items: center; gap: 1rem; min-width: 300px;">
+                        <span style="font-size: 3.5rem; font-weight: 900; color: #fff; line-height: 1;">57%</span>
+                        <span style="color: #fff; font-size: 1rem; font-weight: bold; line-height: 1.3;">dos usuários em SP notam diferença de tratamento entre negros e brancos no sistema de saúde (IPEC)</span>
+                    </div>
+                    <div style="flex: 1; border-left: 2px solid #3f3f46; padding-left: 1.5rem; min-width: 300px;">
+                        <p style="color: #d4d4d4; font-size: 0.95rem; line-height: 1.5;">O racismo institucional atua como um determinante proximal, condicionando os desfechos de óbito e reforçando iniquidades históricas no sistema de saúde.</p>
+                    </div>
+                </div>
+                <p style="margin-top: 1.5rem; font-size: 0.8rem; color: #71717a; font-weight: bold;">Fonte: Fiocruz/ICICT/LIS (Baseado na PNS/IBGE)</p>
+            </div>
+
+            <div class="grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 1.5rem;">
+                <div class="card" style="border-top: 3px solid #3b82f6;">
+                    <h4 style="color: #3b82f6; text-transform: none; font-size: 0.95rem; font-weight: bold; margin-bottom: 0.8rem;">Manifestação 1: Barreiras de Acesso (PNS)</h4>
+                    <p style="font-size: 0.9rem; color: #ccc;">Apenas <strong>69,5%</strong> da população preta realizou consulta médica no último ano, contra <strong>74,8%</strong> dos brancos (IBGE, 2019).</p>
+                </div>
+                <div class="card" style="border-top: 3px solid #3b82f6;">
+                    <h4 style="color: #3b82f6; text-transform: none; font-size: 0.95rem; font-weight: bold; margin-bottom: 0.8rem;">Manifestação 2: Discriminação Relatada (PNS)</h4>
+                    <p style="font-size: 0.9rem; color: #ccc;"><strong>57%</strong> dos usuários notam diferença explícita de tratamento entre pessoas negras e brancas dentro dos sistemas de saúde do município (IPEC, 2021).</p>
+                </div>
+            </div>
+
+            <div class="grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="card">
+                    <h4>Resultado 1: Diagnósticos Tardios (Estágios III + IV)</h4>
+                    <div class="chart-container"><canvas id="oncoChart"></canvas></div>
+                </div>
+                <div class="card">
+                    <h4>Resultado 2: Razão de Mortalidade Materna (RMM)</h4>
+                    <div class="chart-container"><canvas id="rmmChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="card" style="background: rgba(244, 63, 94, 0.05); border-color: var(--rose); text-align: center;">
+                <p style="font-size: 1.05rem; color: #fff; font-weight: 500;">
+                    O diagnóstico tardio na população negra age como uma sentença estrutural de mortalidade prematura sistêmica.
+                </p>
+                <p style="font-size: 0.75rem; color: #888; margin-top: 0.8rem;">Fonte: Dados compilados e adaptados de FOSP (2025) e DATASUS</p>
+            </div>
+        </section>
+
+        <!-- Autores -->
+        <section id="autores">
+            <h3 class="section-title" style="font-size: 2rem;">Autores</h3>
+            <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 3rem; background: transparent; margin-bottom: 0;">
+                <div>
+                    <div class="author-item">
+                        <h5>ADALIANA S. M. ONOHARA</h5>
+                        <p>Bióloga, Doutoranda em ciências - Laboratório de Investigação Médica de Neurologia - LIM-15</p>
+                    </div>
+                    <div class="author-item">
+                        <h5>ANDERSON M. FRANÇA</h5>
+                        <p>Professor Machine Learning e IA PROADI-SUS e Consultor OPAS | Anvisa. Mestrando em Saúde Pública FSP-USP</p>
+                    </div>
+                    <div class="author-item">
+                        <h5>GUSTAVO PRADO DOS SANTOS</h5>
+                        <p>Estatístico, Mestrando em Saúde Pública FSP</p>
+                    </div>
+                    <div class="author-item">
+                        <h5>LUCAS FERREIRA DE OLIVEIRA</h5>
+                        <p>Engenheiro Mecatrônico. Engenheiro de Inteligência Artificial | Voa Health. Aluno especial FSP-USP</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="author-item">
+                        <h5>MARCO ANTÔNIO S.DOS SANTOS</h5>
+                        <p>Graduando BMAC</p>
+                    </div>
+                    <div class="author-item">
+                        <h5>RAFAELA FIRMINO DE ALMEIDA</h5>
+                        <p>Fisioterapeuta, Mestrado em Ciências da Saúde (UFSCar) e doutoranda em Ciências da reabilitação (FMUSP)</p>
+                    </div>
+                    <div class="author-item">
+                        <h5>VICTOR HUGO OVANI MARCHETTI</h5>
+                        <p>Médico. Mestrando em saúde pública</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        PSP5108 - Estatísticas de Saúde (2026)
+    </footer>
+
+    <script>
+        // Configurações globais do Chart.js para estética Dark Mode
+        Chart.defaults.color = '#71717a';
+        Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+        Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+
+        const commomOptions = {
+            maintainAspectRatio: false,
+            layout: { padding: { left: 15, right: 15 } },
+            plugins: { legend: { position: 'bottom', labels: { color: '#888', usePointStyle: true, boxWidth: 8 } } },
+            scales: { x: { grid: { display: false } ,offset:true}, y: { beginAtZero: true } }
+        };
+
+        // Dados base
+        const popData = {
+            labels: ['1970', '1980', '1991', '2000', '2010', '2022'],
+            datasets: [
+                { label: 'Estado (Mi)', data: [18, 25, 32, 37, 41, 44], borderColor: '#38bdf8', tension: 0.3, pointBackgroundColor: '#38bdf8' },
+                { label: 'Capital (Mi)', data: [6, 8, 10, 10, 11, 11], borderColor: '#666', tension: 0.3, pointBackgroundColor: '#666' }
+            ]
+        };
+
+        const agingData = {
+            labels: ['2000', '2010', '2022'],
+            datasets: [
+                { label: 'Estado', data: [34, 54, 96], backgroundColor: '#27272a', borderRadius: 4 },
+                { label: 'Capital', data: [37, 57, 104], backgroundColor: '#38bdf8', borderRadius: 4 }
+            ]
+        };
+
+        const dcntSets = [
+            { label: 'Bruta', mun: [208, 195, 220], est: [191, 188, 217] },
+            { label: 'Padronizada', mun: [239, 175, 149], est: [229, 177, 153] }
+        ];
+
+        window.onload = function() {
+            // Demografia
+            new Chart(document.getElementById('popChart'), { type: 'line', data: popData, options: commomOptions });
+            new Chart(document.getElementById('agingChart'), { type: 'bar', data: agingData, options: commomOptions });
+            
+            // DCNT (beginAtZero desabilitado para evidenciar a tendência)
+            window.myDcnt = new Chart(document.getElementById('dcntChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['2000', '2010', '2022'],
+                    datasets: [
+                        { label: 'Município', data: dcntSets[0].mun, borderColor: '#38bdf8', tension: 0.4 },
+                        { label: 'Estado', data: dcntSets[0].est, borderColor: '#666', tension: 0.4 }
+                    ]
+                },
+                options: { ...commomOptions, scales: { x: { grid: { display: false } }, y: { beginAtZero: false } } }
+            });
+
+            // Educação
+            new Chart(document.getElementById('eduChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Brancos', 'Pretos', 'Pardos'],
+                    datasets: [{ label: 'Taxa (%)', data: [4.3, 10.1, 8.8], backgroundColor: '#ef4444', borderRadius: 4 }]
+                },
+                options: { ...commomOptions, plugins: { legend: { display: false } } }
+            });
+
+            // Componentes TMI (Área Empilhada)
+            new Chart(document.getElementById('compInfantilChart'), {
+                type: 'line',
+                data: {
+                    labels: ['2000', '2010', '2024'],
+                    datasets: [
+                        { label: 'Perinatal', data: [11.0, 7.5, 6.0], borderColor: 'transparent', backgroundColor: '#1e3a8a', fill: true, tension: 0.4 },
+                        { label: 'Neonatal', data: [4.0, 3.0, 2.0], borderColor: 'transparent', backgroundColor: '#1d4ed8', fill: true, tension: 0.4 },
+                        { label: 'Pós-neonatal', data: [1.0, 0.5, 0.3], borderColor: 'transparent', backgroundColor: '#ef4444', fill: true, tension: 0.4 }
+                    ]
+                },
+                options: { ...commomOptions, scales: { y: { stacked: true }, x: { grid: { display: false } } }, elements: { point: { radius: 0 } } }
+            });
+
+            // Causas Externas (Gráfico de Barras Agrupado)
+            new Chart(document.getElementById('causasBarChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Município SP', 'Estado SP'],
+                    datasets: [
+                        { label: '2000', data: [94, 88], backgroundColor: '#4b5563', borderRadius: 4 },
+                        { label: '2022', data: [37, 46], backgroundColor: '#1e40af', borderRadius: 4 }
+                    ]
+                },
+                options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#888' } } } }
+            });
+
+            // Oncologia
+            new Chart(document.getElementById('oncoChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Branca', 'Parda', 'Preta'],
+                    datasets: [
+                        { label: '2010 (%)', data: [38.2, 46.5, 52.1], backgroundColor: '#27272a', borderRadius: 2 },
+                        { label: '2024 (%)', data: [31.5, 45.8, 54.3], backgroundColor: '#ef4444', borderRadius: 2 }
+                    ]
+                },
+                options: commomOptions
+            });
+
+            // RMM Materna
+            new Chart(document.getElementById('rmmChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['2000', '2010', '2022'],
+                    datasets: [
+                        { label: 'Brancas', data: [42, 41, 20], backgroundColor: '#52525b', borderRadius: 2 },
+                        { label: 'Pretas', data: [110, 105, 75], backgroundColor: '#ef4444', borderRadius: 2 },
+                        { label: 'Pardas', data: [25, 25, 15], backgroundColor: '#f59e0b', borderRadius: 2 }
+                    ]
+                },
+                options: commomOptions
+            });
+        };
+
+        function toggleDcnt(idx) {
+            window.myDcnt.data.datasets[0].data = dcntSets[idx].mun;
+            window.myDcnt.data.datasets[1].data = dcntSets[idx].est;
+            window.myDcnt.update();
+            document.getElementById('btnBruta').className = idx === 0 ? 'active' : '';
+            document.getElementById('btnPad').className = idx === 1 ? 'active' : '';
+        }
+    </script>
+</body>
+</html>
